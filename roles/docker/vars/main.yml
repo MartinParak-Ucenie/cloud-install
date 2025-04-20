@@ -1,5 +1,4 @@
 ---
-# vars file for docker
 docker:
   packages:
     - docker-ce
