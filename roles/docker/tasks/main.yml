@@ -1,0 +1,53 @@
+---
+
+- name: Prerequisites
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Add Docker GPG key
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: "{{ docker.path.key }}"
+    mode: "0644"
+  become: yes
+
+- name: Set permissions on Docker GPG key
+  file:
+    path: "{{ docker.path.key }}"
+    mode: '0644'
+    state: file
+  when: not ansible_check_mode
+
+- name: Add Docker repository
+  template:
+    src: docker.list.j2
+    dest: "{{ docker.path.installation }}"
+  notify: Update apt cache
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Docker engine
+  apt:
+    name: "{{ docker.packages }}"
+    state: present
+  when: not ansible_check_mode
+
+- name: Add current user to docker group
+  user:
+    name: "{{ ansible_user | default('ubuntu') }}"
+    groups: docker
+    append: yes
+
+- name: Start and enable Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started

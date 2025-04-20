@@ -1,0 +1,12 @@
+---
+# vars file for docker
+docker:
+  packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+  path:
+    key: /etc/apt/keyrings/docker.asc
+    installation: /etc/apt/sources.list.d/docker.list
