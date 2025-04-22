@@ -2,3 +2,4 @@
 /inventory.ini
 /.vault_pass
 /rpi.yaml
+/roles/jira/files/.env
