@@ -53,7 +53,7 @@ rovnake to je v roli
   tasks:
     - name: Zobrazenie prihlasovacich udajov DB
       debug:
-        msg: "Pouzivatel: {{ db_user }}, heslo: {{ db_user_password }}"
+        msg: "Pouzivatel: {{ db_user }}, heslo: {{ db_password }}"
 ```
 ### Ak nechcete zadavat heslo vzdy, ked sa pouzije vault premenna
 spustajte Ansible playbook s parametrom `--ask-vault-pass`, napriklad
