@@ -15,7 +15,7 @@
     group: root
     mode: '0644'
 
-- name: Create network
+- name: Create jira network
   docker_network:
     name: jira
     state: present

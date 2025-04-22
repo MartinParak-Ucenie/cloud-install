@@ -24,7 +24,28 @@ services:
     cap_add:
       - NET_ADMIN
 
+  roundcube:
+    image: roundcube/roundcubemail:1.6.10-apache
+    container_name: roundcube
+    hostname: roundcube
+    restart: always
+    networks:
+      - mail
+    ports:
+      - "${ROUNDCUBE_PORT}:80"
+    environment:
+      - ROUNDCUBEMAIL_DEFAULT_HOST=mailserver
+      - ROUNDCUBEMAIL_SMTP_SERVER=mailserver
+      - ROUNDCUBEMAIL_SMTP_PORT=587
+      - ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE=5M
+      - ROUNDCUBEMAIL_MEMORY_LIMIT=64M
+    volumes:
+      - /srv/roundcube/config:/var/roundcube/config
+      - /srv/roundcube/logs:/var/roundcube/logs
+      - /srv/roundcube/data:/var/roundcube/data
+
 networks:
   jira:
     external: true
   mail:
+    external: true

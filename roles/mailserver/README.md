@@ -19,3 +19,5 @@ na cielovom serveri sa vytvoria adresare s datami na `/srv/mailserver/`
 ### pri nastavovani SMTP Host
 Host name: mailserver
 
+## Mailovy klient - Roundcube
+dostupny na porte 28081
