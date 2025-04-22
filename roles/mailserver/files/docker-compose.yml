@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mailserver:
+    image: mailserver/docker-mailserver:15.0.2
+    container_name: mailserver
+    hostname: mailserver
+    restart: always
+    domainname: rpi5.local
+    networks:
+      - jira
+      - mail
+    ports:
+      - "${SMTP_PORT}:25"             # SMTP
+      - "${SMTP_SUBMISSION_PORT}:587" # SMTP (Submission)
+      - "${IMAP_PORT}:993"            # IMAP
+    volumes:
+      - /srv/mailserver/maildata:/var/mail
+      - /srv/mailserver/mailstate:/var/mail-state
+      - /srv/mailserver/config:/tmp/docker-mailserver
+    environment:
+      - ONE_DIR=1
+      - DMS_DEBUG=0
+    cap_add:
+      - NET_ADMIN
+
+networks:
+  jira:
+    external: true
+  mail:

@@ -3,3 +3,5 @@
 /.vault_pass
 /rpi.yaml
 /roles/jira/files/.env
+/roles/mailserver/files/.env
+.idea
