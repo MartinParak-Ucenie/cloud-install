@@ -1,0 +1,76 @@
+---
+- name: Install prerequisites for sdkman
+  apt:
+    name:
+      - unzip
+      - zip
+      - curl
+      - wget
+    state: present
+    update_cache: yes
+
+- name: Check if sdkman is already installed
+  stat:
+    path: "/home/{{ ansible_user }}/.sdkman/bin/sdkman-init.sh"
+  register: sdkman_init
+
+- name: Download sdkman installation script
+  get_url:
+    url: https://get.sdkman.io
+    dest: /tmp/sdkman_install.sh
+    mode: '0755'
+  become: yes
+  become_user: "{{ ansible_user }}"
+  when: not sdkman_init.stat.exists
+
+- name: Set permissions for sdkman installation script
+  file:
+    path: /tmp/sdkman_install.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  become: yes
+  become_user: "{{ ansible_user }}"
+  when: not sdkman_init.stat.exists
+
+- name: Install sdkman
+  shell: |
+    cd /home/{{ ansible_user }}
+    bash /tmp/sdkman_install.sh
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ ansible_user }}"
+  when: not sdkman_init.stat.exists
+
+- name: Check if file exists
+  stat:
+    path: "/home/{{ ansible_user }}/.sdkman/bin/sdkman-init.sh"
+  register: file_status
+
+- name: Source sdkman in current shell
+  shell: source "/home/{{ ansible_user }}/.sdkman/bin/sdkman-init.sh"
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ ansible_user }}"
+  changed_when: false
+  when: file_status.stat.exists
+
+- name: Install JDK 17.0.12-oracle
+  shell: |
+    source "/home/{{ ansible_user }}/.sdkman/bin/sdkman-init.sh"
+    sdk install java 17.0.12-oracle < /dev/null
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ ansible_user }}"
+  register: sdk_install_result
+  changed_when: "'is already installed' not in sdk_install_result.stdout"
+  when: file_status.stat.exists
+  ignore_errors: yes
+
+- name: Clean up sdkman installation script
+  file:
+    path: "/tmp/sdkman_install.sh"
+    state: absent

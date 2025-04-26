@@ -1,0 +1,41 @@
+---
+- name: Copy docker-compose.yml
+  copy:
+    src: "../files/docker-compose.yml"
+    dest: "/tmp/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy .env
+  copy:
+    src: "../files/.env"
+    dest: "/tmp/.env"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create jenkins network
+  docker_network:
+    name: jenkins
+    state: present
+
+- name: Create java network
+  docker_network:
+    name: java
+    state: present
+
+- name: Run docker-compose
+  command: docker-compose --env-file /tmp/.env -f /tmp/docker-compose.yml up -d
+  args:
+    chdir: /tmp
+
+- name: Clean up docker-compose file
+  file:
+    path: "/tmp/docker-compose.yml"
+    state: absent
+
+- name: Clean up .env
+  file:
+    path: "/tmp/.env"
+    state: absent
