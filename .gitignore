@@ -6,3 +6,4 @@
 /roles/mailserver/files/.env
 /roles/jenkins/files/.env
 .idea
+/roles/nexus/files/.env

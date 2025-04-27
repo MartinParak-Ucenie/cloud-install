@@ -1,0 +1,41 @@
+---
+- name: Copy docker-compose.yml
+  copy:
+    src: "docker-compose.yml"
+    dest: "/tmp/docker-compose.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+
+- name: Copy .env
+  copy:
+    src: "../files/.env"
+    dest: "/tmp/.env"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+
+- name: Create nexus network
+  docker_network:
+    name: nexus
+    state: present
+
+- name: Create nexus-db network
+  docker_network:
+    name: nexus-db
+    state: present
+
+- name: Run docker-compose
+  command: docker-compose --env-file /tmp/.env -f /tmp/docker-compose.yml up -d
+  args:
+    chdir: /tmp
+
+- name: Clean up docker-compose file
+  file:
+    path: "/tmp/docker-compose.yml"
+    state: absent
+
+- name: Clean up .env
+  file:
+    path: "/tmp/.env"
+    state: absent
